@@ -1448,7 +1448,7 @@ d3_selectionPrototype.append = function(name) {
     return this.appendChild(document.createElementNS(name.space, name.local));
   }
 
-  return this.select(name.local ? appendNS : append);
+  return this.select(name.local && document.createElementNS ? appendNS : append);
 };
 // TODO insert(node, function)?
 // TODO insert(function, string)?
