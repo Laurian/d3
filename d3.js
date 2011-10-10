@@ -340,6 +340,8 @@ d3.round = function(x, n) {
       : Math.round(x);
 };
 d3.xhr = function(url, mime, callback) {
+  try {
+
   var req = new XMLHttpRequest;
   if (arguments.length < 3) callback = mime;
   else if (mime && req.overrideMimeType) req.overrideMimeType(mime);
@@ -348,6 +350,16 @@ d3.xhr = function(url, mime, callback) {
     if (req.readyState === 4) callback(req.status < 300 ? req : null);
   };
   req.send(null);
+  }
+  catch (error) {//IE no XMLHttpRequest
+  $.ajax({
+    url: url,
+    contentType: mime,
+    success: function(data, textStatus, jqXHR) {
+        callback(data);
+    }
+  });
+  }
 };
 d3.text = function(url, mime, callback) {
   function ready(req) {
