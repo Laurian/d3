@@ -2,23 +2,33 @@ var w = 960,
     pw = 14,
     z = ~~((w - pw * 2) / 53),
     ph = z >> 1,
-    h = z * 7;
+    h = z * 7,
+    type = Raphael.svg ? "svg" : "xml";
 
 var vis = d3.select("#chart")
-  .selectAll("svg")
+    .selectAll("div")
     .data(d3.range(1990, 2011))
+    .enter().append("div")
+        .each(generate);
+
+function generate(d, i) {
+    Raphael(this, w, h + ph *2);
+}
+/*
   .enter().append("svg:svg")
     .attr("width", w)
     .attr("height", h + ph * 2)
     .attr("class", "RdYlGn")
   .append("svg:g")
     .attr("transform", "translate(" + pw + "," + ph + ")");
+    */
+
 
 vis.append("svg:text")
     .attr("transform", "translate(-6," + h / 2 + ")rotate(-90)")
     .attr("text-anchor", "middle")
     .text(function(d) { return d; });
-
+/*
 vis.selectAll("rect.day")
     .data(calendar.dates)
   .enter().append("svg:rect")
@@ -43,6 +53,7 @@ vis.selectAll("path.month")
           + "H" + (d.firstWeek + 1) * z
           + "Z";
     });
+*/
 
 d3.csv("dji.csv", function(csv) {
   var data = d3.nest()
