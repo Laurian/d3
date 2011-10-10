@@ -5,14 +5,21 @@ var w = 960,
     h = z * 7,
     type = Raphael.svg ? "svg" : "xml";
 
+papers = [];
 var vis = d3.select("#chart")
     .selectAll("div")
     .data(d3.range(1990, 2011))
     .enter().append("div")
-        .each(generate);
+        .each(generate)
+        .each(year_text);
 
-function generate(d, i) {
-    Raphael(this, w, h + ph *2);
+function generate(data, i) {
+    papers.push(Raphael(this, w, h + ph *2));
+    return true;
+}
+function year_text(data, i) {
+    papers[i].text(6, h/2, data).rotate(-90);
+    return true;
 }
 /*
   .enter().append("svg:svg")
@@ -23,12 +30,12 @@ function generate(d, i) {
     .attr("transform", "translate(" + pw + "," + ph + ")");
     */
 
-
+/*
 vis.append("svg:text")
     .attr("transform", "translate(-6," + h / 2 + ")rotate(-90)")
     .attr("text-anchor", "middle")
     .text(function(d) { return d; });
-/*
+
 vis.selectAll("rect.day")
     .data(calendar.dates)
   .enter().append("svg:rect")
