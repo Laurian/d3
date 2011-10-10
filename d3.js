@@ -355,8 +355,8 @@ d3.xhr = function(url, mime, callback) {
   $.ajax({
     url: url,
     contentType: mime,
-    success: function(data, textStatus, jqXHR) {
-        callback(data);
+    success: function(data, textStatus, req) {
+        callback(req.status < 300 ? req : null);
     }
   });
   }
