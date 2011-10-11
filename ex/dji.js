@@ -42,16 +42,16 @@ function getCSSRule(ruleName, deleteFlag) {               // Return requested st
 Raphael.st.addClass = function(selector) {
     //Simple set Attribute class if SVG
     if (Raphael.svg) {
-        this.forEach(function() {
-            this.addCss(selector)
-        });
+        for (var i = 0; i < this.length; i++) {
+            this[i].addClass(selector)
+        };
     }
     //For IE
     else {
-        var attributes = getCSSAttribute('.' + selector);
-        this.forEach(function() {
-            this.attr(attributes);
-        });
+        var attributes = getCSSAttributes('.' + selector);
+        for (var i = 0; i < this.length; i++) {
+            this[i].attr(attributes);
+        }
     }
 }
 
@@ -63,29 +63,29 @@ Raphael.el.addClass = function(selector) {
     }
     //must extract CSS requirements
     else {
-        var attributes = getCSSAttribute('.' + selector);
+        var attributes = getCSSAttributes('.' + selector);
         this.attr(attributes);
     }
 }
 
-function getCSSAttribute(selector) {
+function getCSSAttributes(selector) {
     var rules = getCSSRule(selector).style.cssText.split(';'),
-    attributes = {},
-    i = 0;
-    for (i = 0; i < rules.length; i++) {
+    attributes = {};
+    for (var i = 0; i < rules.length; i++) {
         var rule = rules[i].split(':');
         if (rule[0] !== undefined && rule[1] !== undefined)
-            attributes[rule[0]] = rule[1].substring(1);
+            attributes[rule[0].replace(' ','')] = rule[1].replace(' ','');
     }
     return attributes;
 }
-        
+      
 
 var papers = [],
+boxes = []
 paper_i = -1;
 vis = d3.select("#chart")
     .selectAll("div")
-    .data(d3.range(1990, 1991))
+    .data(d3.range(1990, 1992))
     .enter().append("div")
         .each(generate);
 
@@ -100,34 +100,59 @@ vis = d3.select("#chart")
         paper.text(6, (h/2+ph), data)
             .attr('text-anchor', 'middle')
             .rotate(-90);
-        paper.safari();
         return true;
     }
 
 //Days Rectangles
-var test;
 vis.selectAll(Raphael.svg ? 'rect' : 'v:rect')
     .data(calendar.dates, function(data, i) {
-        var box, group, started;
-
-        if (i === 0) paper_i++;
+        //setup for each year: Raphael sets
+        if (i === 0) {
+            paper_i++;
+            boxes.push(papers[paper_i].set());
+            if(paper_i > 0) boxes[paper_i-1].addClass('day');
+        }
         
-        box = papers[paper_i].rect(data.week * z + pw, data.day * z, z, z)
-                .addClass('day');
-                        //x, y, width, height 
-        //box.node.setAttribute('class', 'day');
-        test = box;
-    });
+        boxes[paper_i].push( 
+            papers[paper_i].rect(data.week * z + pw, data.day * z, z, z)
+        );
+});//end data, last one
+boxes[paper_i].addClass('day');
 paper_i = -1;
+
 
 //Months Path
-/*
+var months = [];
 vis.selectAll(Raphael.svg ? 'path' : 'v:path')
-    .data(calendar.months, function(data, i) {
-        
-    });
+    .data(calendar.months, function(d, i) {
+        //set paper & add month class to sets
+        if (i === 0) {
+            paper_i++;
+            months.push(papers[paper_i].set());
+            if(paper_i > 0) months[paper_i].addClass('month');
+        }
+
+        //draw month path
+        papers[paper_i].path(
+            "M" + (d.firstWeek + 1) * z + "," + d.firstDay * z
+            + "H" + d.firstWeek * z
+            + "V" + 7 * z
+            + "H" + d.lastWeek * z
+            + "V" + (d.lastDay + 1) * z
+            + "H" + (d.lastWeek + 1) * z
+            + "V" + 0
+            + "H" + (d.firstWeek + 1) * z
+            + "Z"
+        ).translate(pw,0);
+});//end data, last month set
+months[paper_i].addClass('month');
 paper_i = -1;
-*/
+
+//Final Safari forced-rendering
+for (var i = 0; i < papers.length; i++) {
+    papers[i].safari();
+}
+
 /*
 initial svg
   .enter().append("svg:svg")
