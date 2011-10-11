@@ -39,23 +39,25 @@ function getCSSRule(ruleName, deleteFlag) {               // Return requested st
    return false;                                          // we found NOTHING!
 }                                                         // end getCSSRule 
 
-Raphael.st.addClass = function(selector) {
+Raphael.st.addClass = function(addClass, parentSelector) {
     //Simple set Attribute class if SVG
     if (Raphael.svg) {
         for (var i = 0; i < this.length; i++) {
-            this[i].addClass(selector)
+            this[i].addClass(addClass)
         };
     }
     //For IE
     else {
-        var attributes = getCSSAttributes('.' + selector);
+        var sel = '.' + addClass;
+        sel = parentSelector ? parentSelector + ' ' + sel : sel;
+        var attributes = getCSSAttributes(sel);
         for (var i = 0; i < this.length; i++) {
             this[i].attr(attributes);
         }
     }
 }
 
-Raphael.el.addClass = function(selector) {
+Raphael.el.addClass = function(selector, parentSelector) {
     //easily add class
     if (Raphael.svg) {
         var cssClass = this.node.getAttribute('class') !== null ? this.node.getAttribute('class') + ' ' + selector : selector;
@@ -63,14 +65,19 @@ Raphael.el.addClass = function(selector) {
     }
     //must extract CSS requirements
     else {
-        var attributes = getCSSAttributes('.' + selector);
+        var sel = '.' + addClass;
+        sel = parentSelector ? parentSelector + ' ' + sel : sel;
+        var attributes = getCSSAttributes(sel);
         this.attr(attributes);
     }
 }
 
 function getCSSAttributes(selector) {
-    var rules = getCSSRule(selector).style.cssText.split(';'),
+    var rules = getCSSRule(selector),
     attributes = {};
+    if (!rules) return false;
+
+    rules = rules.style.cssText.split(';');
     for (var i = 0; i < rules.length; i++) {
         var rule = rules[i].split(':');
         if (rule[0] !== undefined && rule[1] !== undefined)
@@ -118,6 +125,8 @@ vis.selectAll(Raphael.svg ? 'rect' : 'v:rect')
         );
 });//end data, last one
 boxes[paper_i].addClass('day');
+vis.selectAll(Raphael.svg ? 'rect' : 'v:rect')
+    .data(calendar.dates);
 paper_i = -1;
 
 
@@ -147,62 +156,13 @@ vis.selectAll(Raphael.svg ? 'path' : 'v:path')
 });//end data, last month set
 months[paper_i].addClass('month');
 paper_i = -1;
-
-//Final Safari forced-rendering
-for (var i = 0; i < papers.length; i++) {
-    papers[i].safari();
-}
-
-/*
-initial svg
-  .enter().append("svg:svg")
-    .attr("width", w)
-    .attr("height", h + ph * 2)
-    .attr("class", "RdYlGn")
-  .append("svg:g")
-    .attr("transform", "translate(" + pw + "," + ph + ")");
-    */
-
-/*
-year text
-vis.append("svg:text")
-    .attr("transform", "translate(-6," + h / 2 + ")rotate(-90)")
-    .attr("text-anchor", "middle")
-    .text(function(d) { return d; });
-
-day boxes
-vis.selectAll("rect.day")
-    .data(calendar.dates)
-  .enter().append("svg:rect")
-    .attr("x", function(d) { return d.week * z; })
-    .attr("y", function(d) { return d.day * z; })
-    .attr("class", "day")
-    .attr("width", z)
-    .attr("height", z);
-
-month box
-vis.selectAll("path.month")
-    .data(calendar.months)
-  .enter().append("svg:path")
-    .attr("class", "month")
-    .attr("d", function(d) {
-      return "M" + (d.firstWeek + 1) * z + "," + d.firstDay * z
-          + "H" + d.firstWeek * z
-          + "V" + 7 * z
-          + "H" + d.lastWeek * z
-          + "V" + (d.lastDay + 1) * z
-          + "H" + (d.lastWeek + 1) * z
-          + "V" + 0
-          + "H" + (d.firstWeek + 1) * z
-          + "Z";
-    });
-*/
-
+var test;
 d3.csv("dji.csv", function(csv) {
   var data = d3.nest()
       .key(function(d) { return d.Date; })
       .rollup(function(d) { return (d[0].Close - d[0].Open) / d[0].Open; })
       .map(csv);
+  test = data;
 
   var color = d3.scale.quantize()
       .domain([-.05, .05])
@@ -213,3 +173,9 @@ d3.csv("dji.csv", function(csv) {
     .append("svg:title")
       .text(function(d) { return d.Date + ": " + (data[d.Date] * 100).toFixed(1) + "%"; });
 });
+
+//Final Safari forced-rendering
+for (var i = 0; i < papers.length; i++) {
+    papers[i].safari();
+}
+
