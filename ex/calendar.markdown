@@ -10,7 +10,7 @@ title: Calendar View
 <link type="text/css" rel="stylesheet" href="colorbrewer.css"/>
 <script type="text/javascript" src="../flow-v1.1.1.js"> </script>
 <script type="text/javascript" src="../jquery-1.6.4.min.js"> </script>
-<script type="text/javascript" src="../raphael-2.0.min.js"> </script>
+<script type="text/javascript" src="../raphael.js"> </script>
 <script type="text/javascript" src="../d3.csv.js?2.2.0"> </script>
 <script type="text/javascript" src="../d3.time.js?2.2.0"> </script>
 <script type="text/javascript" src="calendar.js"> </script>

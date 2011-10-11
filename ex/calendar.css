@@ -5,9 +5,9 @@
 .day {
   fill: #fff;
   stroke: #ccc;
-  shape-rendering: crispEdges;
+  stroke-width: 0.25px;
 }
-
+/*  shape-rendering: crispEdges;*/
 .month {
   fill: none;
   stroke: #000;
