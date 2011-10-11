@@ -5,20 +5,30 @@ var w = 960,
     h = z * 7,
     type = Raphael.svg ? "svg" : "xml";
 
-papers = [];
+var papers = [],
+groups = [];
 var vis = d3.select("#chart")
     .selectAll("div")
     .data(d3.range(1990, 2011))
     .enter().append("div")
-        .each(generate)
-        .each(year_text);
+        .each(generate);
 
 function generate(data, i) {
-    papers.push(Raphael(this, w, h + ph *2));
-    return true;
-}
-function year_text(data, i) {
-    papers[i].text(6, h/2, data).rotate(-90);
+    var paper, group;
+
+    //initial create
+    paper = Raphael(this, w, h + ph *2);
+    papers.push(paper);//accessible array for later
+    paper.setStart();
+
+    //year text
+    paper.text(3, h/2, data).attr('text-anchor', 'middle').attr('r', '-90');
+
+    //all grouped
+    group = paper.setFinish();
+    groups.push(group);
+    group.translate(pw, ph);//overall x & y move
+    paper.safari();
     return true;
 }
 /*
