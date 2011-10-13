@@ -88,41 +88,41 @@ function getCSSAttributes(selector) {
       
 
 var papers = [],
-boxes = []
-paper_i = -1;
+boxes = [],
+paper_i = -1,
+year_range = d3.range(1990, 1992);
+var test;
 vis = d3.select("#chart")
-    .selectAll("div")
-    .data(d3.range(1990, 1992))
-    .enter().append("div")
-        .each(generate);
+    .selectAll(type)
+    .data(year_range)
+    .enter().select(function(data ,i) {
+        var paper = Raphael(this, w, h + ph *2);
+        papers.push(paper);
+        //accessible paper array for later
 
-    function generate(data, i) {
-        var paper;
+        return paper.canvas;
+});
 
-        //initial create
-        paper = Raphael(this, w, h + ph *2);
-        papers.push(paper);//accessible array for later
-
-        //year text
-        paper.text(6, (h/2+ph), data)
-            .attr('text-anchor', 'middle')
-            .rotate(-90);
-        return true;
-    }
+vis.select(function(data, i){
+    var text = papers[i].text(6, (h/2+ph), data)
+        .attr('text-anchor', 'middle')
+        .rotate(-90);
+    return text.node;
+});
 
 //Days Rectangles
 vis.selectAll(Raphael.svg ? 'rect' : 'v:rect')
-    .data(calendar.dates, function(data, i) {
+    .data(calendar.dates, function(d, i) {
+        var rect;
         //setup for each year: Raphael sets
         if (i === 0) {
             paper_i++;
             boxes.push(papers[paper_i].set());
             if(paper_i > 0) boxes[paper_i-1].addClass('day');
         }
-        
-        boxes[paper_i].push( 
-            papers[paper_i].rect(data.week * z + pw, data.day * z, z, z)
-        );
+        rect = papers[paper_i].rect(d.week * z + pw, d.day * z, z, z);
+        boxes[paper_i].push(rect); 
+        rect.node.__data__ = d;
 });//end data, last one
 boxes[paper_i].addClass('day');
 vis.selectAll(Raphael.svg ? 'rect' : 'v:rect')
@@ -178,4 +178,3 @@ d3.csv("dji.csv", function(csv) {
 for (var i = 0; i < papers.length; i++) {
     papers[i].safari();
 }
-
