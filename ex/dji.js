@@ -77,8 +77,6 @@ function getCSSAttributes(selector) {
     var rules = getCSSRule(selector),
     attributes = {};
     if (!rules) return false;
-    alert('--'+selector);
-    alert(rules.style.cssText);
     rules = rules.style.cssText.split(';');
     for (var i = 0; i < rules.length; i++) {
         var rule = rules[i].split(':');
