@@ -139,7 +139,7 @@ d3.csv("dji.csv", function(csv) {
             rect = papers[paper_i]
                         .rect(d.week * z + pw, d.day * z, z, z);
 
-            //rect.addClass("q" + color(data[d.Date]) + "-9", '.RdYlGn');
+            rect.addClass("q" + color(data[d.Date]) + "-9", '.RdYlGn');
             boxes[paper_i].push(rect); 
 
             return rect.node;
@@ -183,8 +183,6 @@ d3.csv("dji.csv", function(csv) {
     paper_i = -1;
     //--- END MONTH ---
 });
-
-$('body').attr('style', 'background: rgb(1,20,200)')
 
 //Final Safari forced-rendering
 for (var i = 0; i < papers.length; i++) {
