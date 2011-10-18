@@ -145,8 +145,6 @@ d3.csv("dji.csv", function(csv) {
     boxes[paper_i].addClass('day');
     paper_i = -1;
 
-    boxes[0][0].addClass("q3-9", '.RdYlGn');
-
 
     //Months Path
     var months = [];
