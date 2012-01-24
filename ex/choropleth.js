@@ -96,7 +96,7 @@ var svg = d3.select("#chart")
     .selectAll(type)
     .data([1]) //how can I insert/append it otherwise?
     .enter().select(function(data ,i) {
-        paper = Raphael(this);
+        paper = Raphael(this, 960, 500);
         return paper.canvas;
 });
 
