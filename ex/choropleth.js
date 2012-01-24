@@ -1,3 +1,4 @@
+// :)
 var data; // loaded asynchronously
 
 var path = d3.geo.path();
